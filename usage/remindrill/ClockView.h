@@ -25,12 +25,10 @@ private:
     static ClockView * m_Instance;
 
     lv_obj_t *m_Screen;
-    lv_obj_t *m_TopBar;
+    lv_obj_t *m_Grid;
     lv_obj_t *m_SleepButton;
     lv_obj_t *m_Battery;
     lv_obj_t *m_ClockLabel;
-    lv_obj_t *m_CenterBar;
-    lv_obj_t *m_BottomBar;
     lv_obj_t *m_AlarmsTuneButton;
 
     lv_style_t m_ClockStyle;
