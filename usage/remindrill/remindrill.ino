@@ -35,7 +35,9 @@ code    color
 
 #include <LilyGoLib.h> // Hardware-specific library
 #include <LV_Helper.h>
+#include "ui.h"
 #include "ClockView.h"
+#include "AlarmsView.h"
 
 #define TFT_GREY 0x5AEB
 
@@ -54,12 +56,34 @@ int16_t sleepCountdown_sec = defaultAwakeTime;
 bool pmu_flag = false;
 
 ClockView clockView;
+AlarmsView alarmsView;
+
+screen_t currentScreen = screen_t::clock_screen;
 
 // ISR for Power Button (crown button)
 void setPMUFlag(void)
 {
     if(watch.getTouched())
         pmu_flag = true;
+}
+
+void select_screen(screen_t screen)
+{
+    switch (screen)
+    {
+    case screen_t::clock_screen:
+        lv_scr_load(clockView.getScreen());
+        currentScreen = screen_t::clock_screen;
+        break;
+
+    case screen_t::alarms_screen:
+        lv_scr_load(alarmsView.getScreen());
+        currentScreen = screen_t::alarms_screen;
+        break;
+
+    default:
+        Serial.println(("Invalid screen selection: " + std::to_string(screen)).c_str());
+    }
 }
 
 void setup(void)
@@ -82,6 +106,7 @@ void setup(void)
     beginLvglHelper(false);
 
     clockView.setup();
+    alarmsView.setup();
 
     lv_scr_load(clockView.getScreen());
 
@@ -90,9 +115,18 @@ void setup(void)
 
 void loop()
 {
-    clockView.loop();
-
     lv_task_handler();
+
+    switch(currentScreen) 
+    {
+    case screen_t::clock_screen:
+        clockView.loop();
+        break;
+
+    case screen_t::alarms_screen:
+        alarmsView.loop();
+        break;
+    };
 
     if (watch.getTouched()) // reset awake timer if the screen touched
         sleepCountdown_sec = defaultAwakeTime;
@@ -103,36 +137,6 @@ void loop()
         targetTime = millis() + 1000;
         ss++;
         sleepCountdown_sec--;
-
-        // Update digital time
-        // int xpos = 120;
-        // int ypos = 120;
-
-        // char time_text[] = "00:00";
-        // strncpy_P(time_text, watch.strftime(DATETIME_FORMAT_HM), 5);
-
-        // // Blink colon in the string of RTC time
-        // time_text[2] = ss % 2 ? ':' : ' ';
-
-        // watch.setTextDatum(CC_DATUM);
-
-        // watch.drawString(time_text, xpos, ypos, timeFont);
-
-        // if (sleepCountdown_sec < 0)
-        // {
-        //     sleepCountdown_sec = defaultAwakeTime;
-        //     watch.setSleepMode(PMU_BTN_WAKEUP);
-        //     watch.sleep();
-        // }
-
-        // Update battery
-        // char battery_life_text[] = "100%";
-        // snprintf(battery_life_text, sizeof(battery_life_text), "%3d%%", watch.getBatteryPercent());
-        // // Serial.println(battery_life_text);
-        // watch.setTextDatum(TR_DATUM);
-        // const auto battery_life_area_width = watch.drawString(battery_life_text, LV_HOR_RES, 10, batteryFont);
-        // const auto battery_life_area_height = watch.fontHeight(batteryFont);
-        // watch.drawRect(LV_HOR_RES - battery_life_area_width, 10, battery_life_area_width, battery_life_area_height, TFT_GREY);
     }
 
     // If crown button was pressed and screen touched, then enforce sleep

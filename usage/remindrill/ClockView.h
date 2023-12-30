@@ -1,5 +1,5 @@
-#ifndef _CLOCK_SCREEN_H_
-#define _CLOCK_SCREEN_H_
+#ifndef _CLOCK_VIEW_H_
+#define _CLOCK_VIEW_H_
 
 #include <LilyGoLib.h> // Hardware-specific library
 #include <LV_Helper.h>
@@ -38,4 +38,4 @@ private:
     int m_DummyCount;
 };
 
-#endif // _CLOCK_SCREEN_H_
+#endif // _CLOCK_VIEW_H_

@@ -1,5 +1,6 @@
-#include "ClockView.h"
 #include <lv_conf.h>
+#include "ClockView.h"
+#include "ui.h"
 
 LV_FONT_DECLARE(font_firacode_60);
 
@@ -9,9 +10,6 @@ ClockView *ClockView::m_Instance = nullptr;
 ClockView::ClockView()
     : m_Screen(nullptr)
     , m_Grid(nullptr)
-    // , m_TopBar(nullptr)
-    // , m_CenterBar(nullptr)
-    // , m_BottomBar(nullptr)
     , m_SleepButton(nullptr)
     , m_Battery(nullptr)
     , m_DummyCount(1)
@@ -73,7 +71,6 @@ void ClockView::setup()
 
     m_ClockLabel = lv_label_create(m_Grid);
     lv_obj_align(m_ClockLabel, LV_ALIGN_CENTER, 0, 0);
-    //lv_obj_center(m_ClockLabel);
     lv_obj_add_style(m_ClockLabel, &m_ClockStyle, 0);
     lv_label_set_text(m_ClockLabel, "12:00");
     lv_obj_set_grid_cell(m_ClockLabel,
@@ -141,8 +138,10 @@ void ClockView::event_onAlarmsTune(lv_event_t *e)
 {
     LV_LOG_USER("Alarms Tune Clicked");
 
-    auto &inst = *(ClockView*)e->user_data;
-    const auto pal = lv_palette_t(inst.m_DummyCount % _LV_PALETTE_LAST);
-    inst.m_DummyCount++;
-    lv_obj_set_style_text_color(inst.m_ClockLabel, lv_palette_main(pal), 0);
+    select_screen( screen_t::alarms_screen );
+
+    // auto &inst = *(ClockView*)e->user_data;
+    // const auto pal = lv_palette_t(inst.m_DummyCount % _LV_PALETTE_LAST);
+    // inst.m_DummyCount++;
+    // lv_obj_set_style_text_color(inst.m_ClockLabel, lv_palette_main(pal), 0);
 }
