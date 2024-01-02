@@ -60,6 +60,11 @@ AlarmsView alarmsView;
 
 screen_t currentScreen = screen_t::clock_screen;
 
+void logToSerial(const char * buf)
+{
+    Serial.println(buf);
+}
+
 // ISR for Power Button (crown button)
 void setPMUFlag(void)
 {
@@ -104,6 +109,7 @@ void setup(void)
 
     // Initialize UI
     beginLvglHelper(false);
+    lv_log_register_print_cb( logToSerial );
 
     clockView.setup();
     alarmsView.setup();

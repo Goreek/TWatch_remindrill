@@ -32,6 +32,7 @@ private:
     lv_obj_t *m_AlarmsTuneButton;
 
     lv_style_t m_ClockStyle;
+    lv_style_t m_NoBgStyle;
 
     uint32_t m_UpdateTime;
 
