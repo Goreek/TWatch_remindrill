@@ -1,5 +1,5 @@
 #include "AlarmsView.h"
-#include "ui.h"
+#include "remindrill.h"
 
 constexpr const int32_t alarmsMagic = 0x0A1ABE50;
 
@@ -80,6 +80,7 @@ void AlarmsView::setup()
         control->alarm = &m_alarms.at(ii);
 
         control->activeCheck = lv_checkbox_create(m_Grid);
+        lv_checkbox_set_text(control->activeCheck, "");
         if(control->alarm->active)
             lv_obj_add_state(control->activeCheck, LV_STATE_CHECKED);
         lv_obj_add_event_cb(control->activeCheck, event_onCheck, LV_EVENT_CLICKED, control );

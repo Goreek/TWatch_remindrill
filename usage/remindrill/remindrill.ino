@@ -35,7 +35,7 @@ code    color
 
 #include <LilyGoLib.h> // Hardware-specific library
 #include <LV_Helper.h>
-#include "ui.h"
+#include "remindrill.h"
 #include "ClockView.h"
 #include "AlarmsView.h"
 

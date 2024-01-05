@@ -1,6 +1,6 @@
 #include <lv_conf.h>
 #include "ClockView.h"
-#include "ui.h"
+#include "remindrill.h"
 
 LV_FONT_DECLARE(font_firacode_60);
 
