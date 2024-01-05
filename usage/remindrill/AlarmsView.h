@@ -8,11 +8,19 @@
 
 struct AlarmEntry
 {
-    int8_t id;
     bool active;
     int8_t hour;
     int8_t minute;
 };
+
+struct AlarmControl
+{
+    lv_obj_t * activeCheck;
+    lv_obj_t * hourLabel;
+    lv_obj_t * minuteLabel;
+    AlarmEntry * alarm;
+};
+
 
 enum
 {
@@ -49,6 +57,7 @@ private:
     lv_obj_t *m_ClockButton;
 
     std::array<AlarmEntry,AlarmsNum> m_alarms;
+    std::array<AlarmControl,AlarmsNum> m_controls;
 };
 
 #endif // _ALARMS_VIEW_H_

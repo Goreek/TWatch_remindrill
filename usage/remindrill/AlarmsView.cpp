@@ -16,16 +16,16 @@ enum
 };
 
 static std::array<AlarmEntry,AlarmsNum> defaultAlarms = {{
-    {0, false, 8, 30},
-    {1, false, 10, 0},
-    {2, false, 11, 30},
-    {3, false, 13, 0},
-    {4, false, 14, 30},
-    {5, false, 16, 0},
-    {6, false, 17, 30},
-    {7, false, 19, 0},
-    {8, false, 20, 30},
-    {9, false, 01, 0}    
+    {false, 8, 30},
+    {false, 10, 0},
+    {false, 11, 30},
+    {false, 13, 0},
+    {false, 14, 30},
+    {false, 16, 0},
+    {false, 17, 30},
+    {false, 19, 0},
+    {false, 20, 30},
+    {false, 01, 0}    
 }};
 
 static RTC_SLOW_ATTR uint8_t persistentAlarmsSet[AlarmsSetSize] = {};
@@ -76,27 +76,30 @@ void AlarmsView::setup()
 
     for(int ii = 0; ii < AlarmsNum; ii++)
     {
-        auto activeCheckbox = lv_checkbox_create(m_Grid);
+        auto control = &m_controls.at(ii);
+        control->alarm = &m_alarms.at(ii);
+
+        control->activeCheck = lv_checkbox_create(m_Grid);
         if(m_alarms[ii].active)
-            lv_obj_add_state(activeCheckbox, LV_STATE_CHECKED);
-        lv_obj_add_event_cb(activeCheckbox, event_onCheck, LV_EVENT_CLICKED, &m_alarms.at(ii) );
+            lv_obj_add_state(control->activeCheck, LV_STATE_CHECKED);
+        lv_obj_add_event_cb(control->activeCheck, event_onCheck, LV_EVENT_CLICKED, control );
         
-        lv_obj_set_grid_cell(activeCheckbox,
+        lv_obj_set_grid_cell(control->activeCheck,
                             LV_GRID_ALIGN_STRETCH, 0, 1,
                             LV_GRID_ALIGN_STRETCH, ii+1, 1);
 
         auto hourButton = lv_btn_create(m_Grid);
-        lv_obj_add_event_cb(hourButton, event_onHour, LV_EVENT_CLICKED, &m_alarms.at(ii) );
-        auto hourLabel = lv_label_create(hourButton);
-        lv_label_set_text_fmt(hourLabel, "%02d", m_alarms[ii].hour);
+        lv_obj_add_event_cb(hourButton, event_onHour, LV_EVENT_CLICKED, control );
+        control->hourLabel = lv_label_create(hourButton);
+        lv_label_set_text_fmt(control->hourLabel, "%02d", m_alarms[ii].hour);
         lv_obj_set_grid_cell(hourButton,
                             LV_GRID_ALIGN_STRETCH, 1, 1,
                             LV_GRID_ALIGN_STRETCH, ii+1, 1);
         
         auto minuteButton = lv_btn_create(m_Grid);
-        lv_obj_add_event_cb(minuteButton, event_onMinute, LV_EVENT_CLICKED, &m_alarms.at(ii) );
-        auto minuteLabel = lv_label_create(minuteButton);
-        lv_label_set_text_fmt(minuteLabel, "%02d", m_alarms[ii].minute);
+        lv_obj_add_event_cb(minuteButton, event_onMinute, LV_EVENT_CLICKED, control );
+        control->minuteLabel = lv_label_create(minuteButton);
+        lv_label_set_text_fmt(control->minuteLabel, "%02d", m_alarms[ii].minute);
         lv_obj_set_grid_cell(minuteButton,
                             LV_GRID_ALIGN_STRETCH, 2, 1,
                             LV_GRID_ALIGN_STRETCH, ii+1, 1);
@@ -135,6 +138,10 @@ void AlarmsView::event_onClock(lv_event_t *e)
 
 void AlarmsView::event_onCheck(lv_event_t *e)
 {
+    lv_event_code_t code = lv_event_get_code(e);
+    AlarmControl *control = static_cast<AlarmControl *>( lv_event_get_user_data(e) );
+    auto state = lv_obj_get_state(control->activeCheck);
+    control->alarm->active = ( 0 != state & LV_STATE_CHECKED );
 }
 
 void AlarmsView::event_onHour(lv_event_t *e)
