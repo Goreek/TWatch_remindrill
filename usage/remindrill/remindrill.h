@@ -1,5 +1,5 @@
-#ifndef _UI_H_
-#define _UI_H_
+#ifndef _REMINDRILL_H_
+#define _REMINDRILL_H_
 
 enum screen_t
 {
@@ -11,4 +11,4 @@ void select_screen(screen_t screen);
 
 void stand_by();
 
-#endif
+#endif // _REMINDRILL_H_
