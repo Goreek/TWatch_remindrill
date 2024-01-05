@@ -28,7 +28,7 @@ static std::array<AlarmEntry,AlarmsNum> defaultAlarms = {{
     {false, 01, 0}    
 }};
 
-static RTC_SLOW_ATTR uint8_t persistentAlarmsSet[AlarmsSetSize] = {};
+static RTC_SLOW_ATTR uint8_t persistentAlarmsSet[AlarmsSetSize];
 
 AlarmsView *AlarmsView::m_Instance = nullptr;
 
@@ -80,7 +80,7 @@ void AlarmsView::setup()
         control->alarm = &m_alarms.at(ii);
 
         control->activeCheck = lv_checkbox_create(m_Grid);
-        if(m_alarms[ii].active)
+        if(control->alarm->active)
             lv_obj_add_state(control->activeCheck, LV_STATE_CHECKED);
         lv_obj_add_event_cb(control->activeCheck, event_onCheck, LV_EVENT_CLICKED, control );
         
@@ -91,7 +91,7 @@ void AlarmsView::setup()
         auto hourButton = lv_btn_create(m_Grid);
         lv_obj_add_event_cb(hourButton, event_onHour, LV_EVENT_CLICKED, control );
         control->hourLabel = lv_label_create(hourButton);
-        lv_label_set_text_fmt(control->hourLabel, "%02d", m_alarms[ii].hour);
+        lv_label_set_text_fmt(control->hourLabel, "%02d", control->alarm->hour);
         lv_obj_set_grid_cell(hourButton,
                             LV_GRID_ALIGN_STRETCH, 1, 1,
                             LV_GRID_ALIGN_STRETCH, ii+1, 1);
@@ -99,7 +99,7 @@ void AlarmsView::setup()
         auto minuteButton = lv_btn_create(m_Grid);
         lv_obj_add_event_cb(minuteButton, event_onMinute, LV_EVENT_CLICKED, control );
         control->minuteLabel = lv_label_create(minuteButton);
-        lv_label_set_text_fmt(control->minuteLabel, "%02d", m_alarms[ii].minute);
+        lv_label_set_text_fmt(control->minuteLabel, "%02d", control->alarm->minute);
         lv_obj_set_grid_cell(minuteButton,
                             LV_GRID_ALIGN_STRETCH, 2, 1,
                             LV_GRID_ALIGN_STRETCH, ii+1, 1);
@@ -146,8 +146,30 @@ void AlarmsView::event_onCheck(lv_event_t *e)
 
 void AlarmsView::event_onHour(lv_event_t *e)
 {
+    lv_event_code_t code = lv_event_get_code(e);
+    AlarmControl *control = static_cast<AlarmControl *>( lv_event_get_user_data(e) );
+    switch (code)
+    {
+    case LV_EVENT_CLICKED:
+        control->alarm->hour = ( control->alarm->hour + 1 ) % 24;
+        lv_label_set_text_fmt(control->hourLabel, "%02d", control->alarm->hour);
+        break;
+    default:
+        break;
+    }
 }
 
 void AlarmsView::event_onMinute(lv_event_t *e)
 {
+    lv_event_code_t code = lv_event_get_code(e);
+    AlarmControl *control = static_cast<AlarmControl *>( lv_event_get_user_data(e) );
+    switch (code)
+    {
+    case LV_EVENT_CLICKED:
+        control->alarm->minute = ( control->alarm->minute + 5 ) % 60;
+        lv_label_set_text_fmt(control->minuteLabel, "%02d", control->alarm->minute);
+        break;
+    default:
+        break;
+    }
 }
