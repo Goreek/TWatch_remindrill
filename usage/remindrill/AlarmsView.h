@@ -30,6 +30,10 @@ public:
 
 
     lv_obj_t* getScreen(); 
+
+    void load_alarms();
+    void save_alarms();
+
 protected:
     static void event_onClock(lv_event_t *e);
     static void event_onCheck(lv_event_t *e);

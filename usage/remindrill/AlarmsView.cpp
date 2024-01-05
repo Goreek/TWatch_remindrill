@@ -39,11 +39,6 @@ AlarmsView::AlarmsView()
     , m_alarms{ defaultAlarms }
 {
     m_Instance = this;
-
-    AlarmsSet temp;
-    memcpy(&temp, persistentAlarmsSet, AlarmsSetSize );
-    if(temp.magic == alarmsMagic )
-        m_alarms = temp.alarms;
 }
 
 AlarmsView &AlarmsView::getInstance()
@@ -53,6 +48,8 @@ AlarmsView &AlarmsView::getInstance()
 
 void AlarmsView::setup()
 {
+    load_alarms();
+
     m_Screen = lv_obj_create(nullptr);
     lv_obj_set_style_bg_color(m_Screen, lv_color_black(), 0);
 
@@ -113,6 +110,22 @@ void AlarmsView::loop()
 lv_obj_t *AlarmsView::getScreen()
 {
     return m_Screen;
+}
+
+void AlarmsView::load_alarms()
+{
+    AlarmsSet temp;
+    memcpy( &temp, persistentAlarmsSet, AlarmsSetSize );
+    if(temp.magic == alarmsMagic )
+        m_alarms = temp.alarms;
+    else
+        m_alarms = defaultAlarms;
+}
+
+void AlarmsView::save_alarms()
+{
+    AlarmsSet temp{ alarmsMagic, m_alarms };
+    memcpy( persistentAlarmsSet, &temp, AlarmsSetSize );
 }
 
 void AlarmsView::event_onClock(lv_event_t *e)

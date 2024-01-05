@@ -141,10 +141,7 @@ void ClockView::event_onSleep(lv_event_t *e)
 {
     LV_LOG_USER("Sleep Clicked");
 
-    // Set to wake by pressing the button on the crown
-    watch.setSleepMode(PMU_BTN_WAKEUP);
-
-    watch.sleep();
+    stand_by();
 }
 
 void ClockView::event_onAlarmsTune(lv_event_t *e)

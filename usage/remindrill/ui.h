@@ -9,4 +9,6 @@ enum screen_t
 
 void select_screen(screen_t screen);
 
+void stand_by();
+
 #endif

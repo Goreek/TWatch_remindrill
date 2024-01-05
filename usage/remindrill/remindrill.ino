@@ -91,6 +91,20 @@ void select_screen(screen_t screen)
     }
 }
 
+void stand_by()
+{
+    alarmsView.save_alarms();
+
+    // After the PMU interrupt is triggered, the interrupt status must be cleared,
+    // otherwise the next interrupt will not be triggered
+    watch.clearPMU();
+
+    // Set to wake by pressing the button on the crown
+    watch.setSleepMode(PMU_BTN_WAKEUP);
+
+    watch.sleep();
+}
+
 void setup(void)
 {
     // Serial.begin(115200);
@@ -148,15 +162,7 @@ void loop()
     // If crown button was pressed and screen touched, then enforce sleep
     if (pmu_flag && watch.getTouched())
     {
-
-        // After the PMU interrupt is triggered, the interrupt status must be cleared,
-        // otherwise the next interrupt will not be triggered
-        watch.clearPMU();
-
-        // Set to wake by pressing the button on the crown
-        watch.setSleepMode(PMU_BTN_WAKEUP);
-
-        watch.sleep();
+        stand_by();
     }
 
     delay(5);
