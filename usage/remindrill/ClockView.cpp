@@ -149,9 +149,4 @@ void ClockView::event_onAlarmsTune(lv_event_t *e)
     LV_LOG_USER("Alarms Tune Clicked");
 
     select_screen( screen_t::alarms_screen );
-
-    // auto &inst = *(ClockView*)e->user_data;
-    // const auto pal = lv_palette_t(inst.m_DummyCount % _LV_PALETTE_LAST);
-    // inst.m_DummyCount++;
-    // lv_obj_set_style_text_color(inst.m_ClockLabel, lv_palette_main(pal), 0);
 }

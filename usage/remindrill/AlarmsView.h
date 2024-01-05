@@ -40,7 +40,9 @@ public:
     lv_obj_t* getScreen(); 
 
     void load_alarms();
-    void save_alarms();
+    void store_alarms() const;
+
+    int32_t get_next_alarm_sec() const;
 
 protected:
     static void event_onClock(lv_event_t *e);

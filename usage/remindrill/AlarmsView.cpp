@@ -125,7 +125,29 @@ void AlarmsView::load_alarms()
         m_alarms = defaultAlarms;
 }
 
-void AlarmsView::save_alarms()
+int32_t AlarmsView::get_next_alarm_sec() const
+{
+    tm timeInfo;
+    watch.getDateTime(&timeInfo);
+
+    int32_t best = INT32_MAX;
+    for (auto a : m_alarms)
+    {
+        if (!a.active)
+            continue;
+        int32_t h = (a.hour - timeInfo.tm_hour);
+        h = h < 0 ? h + 24 : h;
+        int32_t m = (a.minute - timeInfo.tm_min);
+        m = m <= 0 ? m + 60 : m;
+        const int32_t s = m * 60 + h * 3600 - timeInfo.tm_sec;
+        if (s < best)
+            best = s;
+    }
+
+    return best == INT32_MAX ? -1 : best;
+}
+
+void AlarmsView::store_alarms() const
 {
     AlarmsSet temp{ alarmsMagic, m_alarms };
     memcpy( persistentAlarmsSet, &temp, AlarmsSetSize );

@@ -93,16 +93,21 @@ void select_screen(screen_t screen)
 
 void stand_by()
 {
-    alarmsView.save_alarms();
+    alarmsView.store_alarms();
+    auto timer_sec = alarmsView.get_next_alarm_sec();
 
     // After the PMU interrupt is triggered, the interrupt status must be cleared,
     // otherwise the next interrupt will not be triggered
     watch.clearPMU();
+    watch.clearCountdownTimer();
 
     // Set to wake by pressing the button on the crown
-    watch.setSleepMode(PMU_BTN_WAKEUP);
+    esp_sleep_enable_ext1_wakeup(_BV(BOARD_PMU_INT), ESP_EXT1_WAKEUP_ALL_LOW);
 
-    watch.sleep();
+    if( timer_sec > 0 )
+        esp_deep_sleep(1000000ULL * timer_sec);
+    else
+        esp_deep_sleep_start();
 }
 
 void setup(void)
